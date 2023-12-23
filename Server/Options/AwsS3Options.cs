@@ -4,7 +4,7 @@ namespace Server.Options
 {
     public class AwsS3Options
     {
-        public const string Gateway = "AwsConfiguration";
+        public const string ConfigSection = "AwsConfiguration";
         [Required]
         public string BucketName { get; set; }
         [Required]
