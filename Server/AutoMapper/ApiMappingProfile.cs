@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Client.Models.Request;
+using Server.Entities;
 using Server.Models.Request;
+using Server.Models.Response;
 
 namespace Server.AutoMapper
 {
@@ -14,10 +16,13 @@ namespace Server.AutoMapper
         private void CreateRequestMappings()
         {
             CreateMap<CreatBookRequest, CreateBook>();
+            CreateMap<CreateBook, Book>();
+            
         }
         private void CreateResponseMappings()
         {
-
+            CreateMap<Book, CreatedBook>();
+            CreateMap<Book, FetchedBook>();
         }
     }
 }
