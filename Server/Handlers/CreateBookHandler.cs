@@ -1,6 +1,8 @@
 ﻿using Amazon.S3.Model;
 using AutoMapper;
 using MediatR;
+using Server.Entities;
+using Server.Exceptions;
 using Server.Models.Request;
 using Server.Models.Response;
 using Server.Services;
@@ -12,12 +14,14 @@ namespace Server.Handlers
         private readonly IAwsS3Service _awsS3Service;
         private readonly ILogger<CreateBookHandler> _logger;
         private readonly IMapper _mapper;
+        private readonly ShopItContext _context;
 
-        public CreateBookHandler(IAwsS3Service awsS3Service, ILogger<CreateBookHandler> logger, IMapper mapper)
+        public CreateBookHandler(IAwsS3Service awsS3Service, ILogger<CreateBookHandler> logger, IMapper mapper, ShopItContext context)
         {
             _awsS3Service = awsS3Service;
             _logger = logger;
             _mapper = mapper;
+            _context = context;
         }
 
         public async Task<CreatedBook> Handle(CreateBook request, CancellationToken cancellationToken)
@@ -25,8 +29,8 @@ namespace Server.Handlers
             byte[] decodedBytes = Convert.FromBase64String(request.CoverImage);
             var fileExt = IsImage(decodedBytes);
 
-            if (String.IsNullOrEmpty(fileExt))
-                return new CreatedBook(); //thow Error if its not image!
+            if (string.IsNullOrEmpty(fileExt))
+                throw new UserFriendlyException(ErrorCode.BAD_REQUEST,"Cover image is not supported type");     
 
             await using var memoryStream = new MemoryStream(decodedBytes);
             
@@ -37,13 +41,19 @@ namespace Server.Handlers
                 Name = docName
             };
             await _awsS3Service.UploadFileAsync(s3Obj);
-            return new CreatedBook();
+
+            var book = _mapper.Map<Book>(request);
+            book.CoverImage = s3Obj.Name;
+            _context.Books.Add(book);
+            await _context.SaveChangesAsync();
+            var response = _mapper.Map<CreatedBook>(book);
+
+            return response;
 
         }
         private static string IsImage(byte[] data)
         {
-            // Check for a valid image file header (e.g., PNG, JPEG, GIF)
-            // For simplicity, this example checks for a JPEG header
+            // Check for a valid image file header (e.g., PNG, JPEG)
             if (data.Length >= 2 && data[0] == 0xFF && data[1] == 0xD8)
                 return ".jpeg";
             
