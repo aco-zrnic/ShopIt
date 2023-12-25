@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.Behavior;
 using Server.Models.Request;
-using Server.Util.Keycloak;
+using Server.Util.Auth0;
 using Server.Util.Pagination;
 using System.Data;
 
@@ -29,8 +29,9 @@ namespace Server.Controllers
             _mediator = mediator;
         }
 
-        //[Authorize(Roles = KeycloakRoles.All)]
+
         [HttpGet]
+        [Authorize(Policy = PermissionResource.View)]
         public async Task<IActionResult> GetBooks([FromQuery] GetBooksRequest request, [FromQuery] PaginateRequest paginateRequest)
         {
             var mappedRequest = _mapper.Map<FetchBooks>(request);
@@ -41,9 +42,9 @@ namespace Server.Controllers
             else
                 return Ok(_mapper.Map<FetchedBooksResponse[]>(response.Books.ToArray()));
         }
-        // GET api/<BookController>/5
-        //[Authorize(Roles = KeycloakRoles.All)]
+
         [HttpGet("{id}")]
+        [Authorize(Policy = PermissionResource.View)]
         public async Task<IActionResult> Get(int id)
         {
             var response = await _mediator.Send(new FetchBook { Id = id });
@@ -52,6 +53,7 @@ namespace Server.Controllers
 
         [HttpPost]
         [RequestSizeLimit(5*1024*1024)]
+        [Authorize(Policy = PermissionResource.Create)]
         public async Task<IActionResult> Post([FromBody] CreatBookRequest request)
         {
             var mappedRequest = _mapper.Map<CreateBook>(request);
@@ -60,6 +62,7 @@ namespace Server.Controllers
         }
         [HttpPost("books-bulk")]
         [RequestSizeLimit(10 * 1024 * 1024)]
+        [Authorize(Policy = PermissionResource.Create)]
         public async Task<IActionResult> PostBooks([FromBody] CreatBookRequest[] request)
         {
             var mappedRequest = _mapper.Map<CreateBook[]>(request);
@@ -73,6 +76,7 @@ namespace Server.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = PermissionResource.Delete)]
         public async Task<IActionResult> Delete(int id)
         {
             var response = await _mediator.Send(new DeleteBook {  Id = id });

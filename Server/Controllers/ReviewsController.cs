@@ -1,9 +1,12 @@
-﻿using AutoMapper;
+﻿using Amazon.Auth.AccessControlPolicy;
+using AutoMapper;
 using Client.Models.Request;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Behavior;
 using Server.Models.Request;
+using Server.Util.Auth0;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -23,21 +26,10 @@ namespace Server.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
+        
 
-        // GET api/<ReviewsController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<ReviewsController>
         [HttpPost]
+        [Authorize(Policy = PermissionResource.Create)]
         public async Task<IActionResult> Post([FromBody] AddScoreRequest request)
         {
             var response = await _mediator.Send(_mapper.Map<AddScore>(request));
@@ -50,7 +42,7 @@ namespace Server.Controllers
         {
         }
 
-        // DELETE api/<ReviewsController>/5
+        
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
