@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Server.Entities;
 using Server.Models.Request;
 using Server.Models.Response;
+using Server.Services;
 using System.Linq;
 
 namespace Server.Handlers
@@ -13,11 +14,14 @@ namespace Server.Handlers
         private readonly ShopItContext _context;
         private readonly ILogger<GetBooksHandler> _logger;
         private readonly IMapper _mapper;
-        public GetBooksHandler(ShopItContext context, ILogger<GetBooksHandler> logger, IMapper mapper)
+        private readonly IAwsS3Service _awsS3Service;
+
+        public GetBooksHandler(ShopItContext context, ILogger<GetBooksHandler> logger, IMapper mapper, IAwsS3Service awsS3Service)
         {
             _context = context;
             _logger = logger;
             _mapper = mapper;
+            _awsS3Service = awsS3Service;
         }
 
         public async Task<FetchedBooks> Handle(FetchBooks request, CancellationToken cancellationToken)
@@ -59,6 +63,11 @@ namespace Server.Handlers
             else if (request.MinScore is null && request.MaxScore is not null)
                 filteredListOfBooks = filteredListOfBooks.Where(a => a.Score < request.MinScore).ToList();
 
+            for (int i = 0; i< filteredListOfBooks.Count; i++)
+            {
+                var base64Image = await _awsS3Service.GetFileAsync(filteredListOfBooks[i].CoverImage);
+                filteredListOfBooks[i].CoverImage = base64Image.Base64File;
+            }
             return new FetchedBooks { Books = filteredListOfBooks.AsQueryable() };
         }
     }
