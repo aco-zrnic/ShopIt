@@ -14,9 +14,9 @@ namespace Client.Models.Request
         [Required]
         public string Title { get; set; }
         public string Description { get; set; }
-        public string MainActors { get; set; }
+        public string[] MainActors { get; set; }
         [Required]
-        public DateTimeOffset ReleaseData { get; set; }
+        public DateTime ReleaseDate { get; set; }
         [Required]
         [RegularExpression(RegexPattern.Base64String, ErrorMessage = "The provided string is not valid base64 string")]
         public string CoverImage { get; set; }

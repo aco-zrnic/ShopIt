@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using Client.Models.Request;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Behavior;
 using Server.Models.Request;
+using Server.Util.Keycloak;
+using System.Data;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -23,17 +26,20 @@ namespace Server.Controllers
             _mediator = mediator;
         }
 
+        //[Authorize(Roles = KeycloakRoles.All)]
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IActionResult> GetALL()
         {
-            return new string[] { "value1", "value2" };
+            var response = await _mediator.Send(new FetchBook { Id = 2 });
+            return Ok(response);
         }
-
         // GET api/<BookController>/5
+        //[Authorize(Roles = KeycloakRoles.All)]
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            return "value";
+            var response = await _mediator.Send(new FetchBook { Id = id });
+            return Ok(response);
         }
 
         [HttpPost]
