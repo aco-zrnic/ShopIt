@@ -34,6 +34,7 @@ namespace Server.Controllers
         [Authorize(Policy = PermissionResource.View)]
         public async Task<IActionResult> GetBooks([FromQuery] GetBooksRequest request, [FromQuery] PaginateRequest paginateRequest)
         {
+            //i would also use Redis here, for storing in memory array of books
             var mappedRequest = _mapper.Map<FetchBooks>(request);
             var response = await _mediator.Send(mappedRequest);
 
