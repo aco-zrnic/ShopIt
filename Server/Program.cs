@@ -11,12 +11,23 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Net.Http.Headers;
+using Serilog;
 using Server.Behavior;
 using Server.Entities;
 using Server.Modules;
 using Server.Options;
+using System.Reflection.PortableExecutable;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog((context, configuration) =>
+{
+        configuration.ReadFrom
+        .Configuration(context.Configuration)
+        .WriteTo.Console()
+        .Enrich.FromLogContext()
+        .Enrich.WithMachineName()
+        .Enrich.WithEnvironmentName();
+});
 builder.Host
     .UseServiceProviderFactory(new AutofacServiceProviderFactory())
      .ConfigureContainer<ContainerBuilder>(builder =>
