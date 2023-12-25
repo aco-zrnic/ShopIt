@@ -24,14 +24,20 @@ namespace Server.Entities
                     .Property(r => r.Score)
                     .IsRequired();
                 });
-                
-            // Configure relationships
-            modelBuilder.Entity<Book>()
+
+            modelBuilder
+                .Entity<Book>()
                 .HasMany(r=>r.Review)
                 .WithOne(r => r.Book)
                 .HasForeignKey(r => r.BookId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade); //if we delete book,delete all reviews
+
+            modelBuilder
+                .Entity<Book>()
+                .Property(b => b.ReleaseDate)
+                .HasColumnType("date") // Store only date part
+                .IsRequired();
         }
     }
 }
