@@ -38,9 +38,6 @@ builder.Host
            .WithAllOpenGenericHandlerTypesRegistered()
            .Build();
 
-         // this will add all your Request- and Notificationhandler
-         // that are located in the same project as your program-class
-
          builder.RegisterMediatR(configuration);
 
          
@@ -70,7 +67,7 @@ builder.Services.AddAuthServiceCollection(builder.Configuration);
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo() { Description = "Shop It Books" });
-    string securityDefinitionName = builder.Configuration.GetValue<string>("SwaggerUISecurityMode") ?? "Bearer";
+    string securityDefinitionName = builder.Configuration.GetValue<string>("SwaggerUISecurityMode");
   
     var securityScheme = new OpenApiOAuthSecurityScheme(builder.Configuration.GetValue<string>("Auth0:Domain"), builder.Configuration.GetValue<string>("Auth0:Audience"));
     var securityRequirement = new OpenApiOAuthSecurityRequirement();
