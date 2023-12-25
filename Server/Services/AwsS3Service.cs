@@ -30,6 +30,27 @@ namespace Server.Services
             _s3client = new AmazonS3Client(credentials, config);
         }
 
+        public async Task<S3Response> DeleteFileAsync(string keyName)
+        {
+            try
+            {
+                DeleteObjectResponse response = await _s3client.DeleteObjectAsync(new DeleteObjectRequest { BucketName =  _options.BucketName, Key =  keyName });
+                
+                if (response.HttpStatusCode != HttpStatusCode.OK)
+                    throw new UserFriendlyException(ErrorCode.AWS_ERROR, $"Failed to retrieve image. HTTP Status Code: {response.HttpStatusCode}");
+
+                return new S3Response() { StatusCode = 200 };
+            }
+            catch (AmazonS3Exception s3Exception)
+            {
+                throw new AwsS3Exception(s3Exception.ErrorCode, s3Exception.Message, s3Exception.ResponseBody);
+            }
+            catch (Exception ex)
+            {
+                throw new UserFriendlyException(ErrorCode.GENERAL, ex.Message, ex.InnerException);
+            }
+        }
+
         public async Task<S3Response> GetFileAsync(string keyName)
         {
             try

@@ -10,5 +10,6 @@ namespace Server.Services
     {
         Task<S3Response> UploadFileAsync(UploadS3Object obj);
         Task<S3Response> GetFileAsync(string keyName);
+        Task<S3Response> DeleteFileAsync(string keyName);
     }
 }
