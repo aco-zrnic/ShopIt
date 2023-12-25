@@ -22,7 +22,8 @@ namespace Server.AutoMapper
             CreateMap<CreatBookRequest, CreateBook>();
             CreateMap<CreateBook, Book>();
             CreateMap<GetBooksRequest, FetchBooks>();
-            
+            CreateMap<Book, SuccesfulAddedBook>();
+            CreateMap<CreateBook, SuccesfulAddedBook>();
             //Review
             CreateMap<AddScoreRequest, AddScore>();
             CreateMap<AddScore, Review>();
