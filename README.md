@@ -46,7 +46,7 @@ Ensure you have .NET SDK, Autofac, AWS S3 credentials, Seq Logging Server, and a
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/your-username/your-repo.git
+    git clone https://github.com/aco-zrnic/ShopIt.git
     ```
 
 2. Build and run the project:
