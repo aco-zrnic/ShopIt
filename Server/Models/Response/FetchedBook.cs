@@ -1,10 +1,6 @@
-﻿using MediatR;
-using Server.Models.Response;
-using System.ComponentModel.DataAnnotations;
-
-namespace Server.Models.Request
+﻿namespace Server.Models.Response
 {
-    public class CreateBook :IRequest<CreatedBook>
+    public class FetchedBook
     {
         public string Title { get; set; }
         public string Description { get; set; }
@@ -12,6 +8,5 @@ namespace Server.Models.Request
         public DateTime ReleaseDate { get; set; }
         public string CoverImage { get; set; }
         public bool IsComic { get; set; }
-
     }
 }
