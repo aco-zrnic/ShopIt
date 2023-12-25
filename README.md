@@ -36,7 +36,7 @@ The project's configuration is managed through the `appsettings.json` file. This
   },
   "SwaggerUISecurityMode": "oauth2"
 }
-
+```
 ### Prerequisites
 
 Ensure you have .NET SDK, Autofac, AWS S3 credentials, Seq Logging Server, and an Auth0 account.
